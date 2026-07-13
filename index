@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de los Gatitos 🐾</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F7F5F0; color: #2C2C2A; min-height: 100vh; }
+
+  .header { background: #7F77DD; padding: 1.25rem 1.25rem 1rem; }
+  .header h1 { font-size: 20px; font-weight: 600; color: white; }
+  .header p { font-size: 13px; color: rgba(255,255,255,0.85); margin-top: 2px; }
+
+  .alexa-banner { background: #1a1740; color: white; padding: 10px 1.25rem; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; }
+  .alexa-banner .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .alexa-banner strong { color: #BFB9FF; }
+
+  .nav { display: flex; background: white; border-bottom: 1px solid #E8E4DC; overflow-x: auto; }
+  .nav button { flex: 1; min-width: 70px; padding: 10px 4px 8px; border: none; background: none; font-size: 11px; color: #888780; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; border-bottom: 2px solid transparent; transition: color 0.2s; }
+  .nav button.active { color: #7F77DD; border-bottom-color: #7F77DD; }
+  .nav button .nav-icon { font-size: 20px; }
+
+  .section { display: none; padding: 1rem 1.25rem; max-width: 480px; }
+  .section.active { display: block; }
+
+  .card { background: white; border-radius: 12px; border: 1px solid #E8E4DC; padding: 1rem 1.25rem; margin-bottom: 12px; }
+  .card-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888780; margin-bottom: 6px; }
+  .card-title { font-size: 15px; font-weight: 600; color: #2C2C2A; }
+  .card-body { font-size: 14px; color: #5F5E5A; margin-top: 6px; line-height: 1.6; }
+
+  .highlight { background: #EEEDFE; border-left: 3px solid #7F77DD; border-radius: 0 8px 8px 0; padding: 10px 12px; margin-top: 10px; font-size: 13px; color: #3C3489; line-height: 1.5; }
+  .highlight-amber { background: #FAEEDA; border-left-color: #BA7517; color: #633806; }
+  .highlight-green { background: #EAF3DE; border-left-color: #3B6D11; color: #27500A; }
+  .highlight-red { background: #FCEBEB; border-left-color: #A32D2D; color: #501313; }
+
+  .week-table { background: white; border-radius: 12px; border: 1px solid #E8E4DC; overflow: hidden; margin-bottom: 12px; }
+  .week-row { display: flex; align-items: flex-start; gap: 0; border-bottom: 1px solid #F1EFE8; }
+  .week-row:last-child { border-bottom: none; }
+  .week-day { font-size: 12px; font-weight: 700; color: #888780; min-width: 52px; padding: 12px 0 12px 14px; }
+  .week-day.highlight-day { color: #7F77DD; }
+  .week-content { padding: 10px 14px 10px 0; flex: 1; }
+  .week-task { font-size: 13px; color: #2C2C2A; display: flex; align-items: flex-start; gap: 6px; margin-bottom: 4px; line-height: 1.4; }
+  .week-task:last-child { margin-bottom: 0; }
+
+  .cat-card { background: white; border-radius: 12px; border: 1px solid #E8E4DC; margin-bottom: 10px; overflow: hidden; }
+  .cat-header { padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .cat-name { font-size: 16px; font-weight: 600; }
+  .cat-gender { font-size: 12px; color: #888780; margin-top: 1px; }
+  .cat-chevron { font-size: 18px; color: #888780; transition: transform 0.2s; }
+  .cat-body { display: none; border-top: 1px solid #F1EFE8; padding: 1rem 1.25rem; }
+  .cat-body.open { display: block; }
+  .cat-chevron.open { transform: rotate(180deg); }
+  .tip-item { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.5; color: #5F5E5A; }
+  .tip-item:last-child { margin-bottom: 0; }
+  .tip-icon { flex-shrink: 0; font-size: 16px; }
+
+  .alexa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .alexa-cmd { background: #1a1740; border-radius: 10px; padding: 10px 12px; }
+  .alexa-cmd .cmd { font-size: 13px; font-weight: 700; color: #BFB9FF; }
+  .alexa-cmd .desc { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 3px; line-height: 1.4; }
+  .alexa-full { grid-column: 1 / -1; }
+
+  .checklist { background: white; border-radius: 12px; border: 1px solid #E8E4DC; overflow: hidden; margin-bottom: 12px; }
+  .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 1.25rem; border-bottom: 1px solid #F1EFE8; cursor: pointer; }
+  .check-item:last-child { border-bottom: none; }
+  .check-box { width: 22px; height: 22px; border-radius: 6px; border: 2px solid #D3D1C7; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .check-box.checked { background: #7F77DD; border-color: #7F77DD; }
+  .check-box.checked::after { content: '✓'; color: white; font-size: 13px; font-weight: 700; }
+  .check-text { font-size: 14px; color: #2C2C2A; line-height: 1.5; }
+  .check-text.checked { color: #888780; text-decoration: line-through; }
+
+  .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #888780; margin: 16px 0 8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🐾 Manual de los Gatitos</h1>
+  <p>Para Dulce · Julio está en Tijuana</p>
+</div>
+
+<div class="alexa-banner">
+  <span class="icon">⚠️</span>
+  <span><strong>Importante:</strong> en esta casa usa siempre los comandos de Alexa para las luces. <strong>No uses los interruptores</strong> — solo resetean los focos inteligentes.</span>
+</div>
+
+<div class="nav">
+  <button class="active" onclick="showSection('comida', this)">
+    <span class="nav-icon">🍽️</span>Comida
+  </button>
+  <button onclick="showSection('agua', this)">
+    <span class="nav-icon">💧</span>Agua
+  </button>
+  <button onclick="showSection('areneros', this)">
+    <span class="nav-icon">🪣</span>Areneros
+  </button>
+  <button onclick="showSection('gatitos', this)">
+    <span class="nav-icon">🐱</span>Gatitos
+  </button>
+  <button onclick="showSection('rutina', this)">
+    <span class="nav-icon">📅</span>Rutina
+  </button>
+  <button onclick="showSection('casa', this)">
+    <span class="nav-icon">🏠</span>Casa
+  </button>
+</div>
+
+<!-- COMIDA -->
+<div id="comida" class="section active">
+  <div class="card">
+    <div class="card-label">¿Cuándo?</div>
+    <div class="card-title">🌙 Una vez al día — antes de dormir</div>
+    <div class="card-body">Llena la tacita y repártela en los 2 bowls. Con eso tienen para 24 horas.</div>
+    <div class="highlight-green highlight">✅ Los 3 comen lo mismo: Haru, Chiqui y Jolie comparten sin problema.</div>
+  </div>
+  <div class="card">
+    <div class="card-label">¿Dónde están las croquetas?</div>
+    <div class="card-title">📦 Arriba del refrigerador</div>
+    <div class="card-body">Ya sabes dónde están. Una tacita repartida en los 2 bowls es suficiente.</div>
+  </div>
+</div>
+
+<!-- AGUA -->
+<div id="agua" class="section">
+  <div class="card">
+    <div class="card-label">Las fuentes</div>
+    <div class="card-title">💧 2 fuentes de agua — ~2 litros cada una</div>
+    <div class="card-body">Para apagarlas y prenderlas usa Alexa:</div>
+    <div class="highlight" style="margin-top:10px">
+      🔇 <strong>"Alexa, apaga acuario"</strong> — apaga las 2 fuentes<br>
+      🔊 <strong>"Alexa, prende acuario"</strong> — las vuelve a encender
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">¿Cómo llenarlas?</div>
+    <div class="card-title">El miércoles hay que revisarlas</div>
+    <div class="card-body">Cada fuente tiene una florecita con un orificio — por ahí se le agrega el agua. Tiene un indicador visual para saber cuánto le falta, lo puedes ver sin problema.</div>
+    <div class="highlight-amber highlight">⚠️ Apaga primero con Alexa antes de manipular las fuentes, y vuélvelas a prender cuando termines.</div>
+  </div>
+</div>
+
+<!-- ARENEROS -->
+<div id="areneros" class="section">
+  <div class="card">
+    <div class="card-label">¿Cuándo limpiar?</div>
+    <div class="card-title">🪣 Martes, miércoles y jueves — entre 4 y 5pm</div>
+    <div class="card-body">Con que vengas una vez al día y los dejes bien limpios, es más que suficiente. Cuando Julio no está, los gatitos duermen mucho más y usan menos el arenero.</div>
+    <div class="highlight-green highlight">✅ Los 2 areneros deben quedar completamente limpios en cada visita.</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Tip Chiqui</div>
+    <div class="card-title">🐱 La puerta del arenero se puede zafar</div>
+    <div class="card-body">Chiqui rasca muy fuerte con su garra cuando tapa su arena y a veces tira la puerta. Si la encuentras caída o zafada, solo ponla de vuelta — no hay nada malo.</div>
+  </div>
+</div>
+
+<!-- GATITOS -->
+<div id="gatitos" class="section">
+  <p style="font-size:13px; color:#5F5E5A; margin-bottom:12px;">Toca el nombre de cada gatito para ver sus tips.</p>
+
+  <!-- Haru -->
+  <div class="cat-card">
+    <div class="cat-header" onclick="toggleCat('haru')">
+      <div>
+        <div class="cat-name">🐱 Haru</div>
+        <div class="cat-gender">El niño</div>
+      </div>
+      <div class="cat-chevron" id="chevron-haru">▼</div>
+    </div>
+    <div class="cat-body" id="cat-haru">
+      <div class="tip-item">
+        <span class="tip-icon">⚠️</span>
+        <span><strong>Hace pipí fuera del arenero.</strong> Es por estrés — no es nada grave. Revisa el pasillo, frente a la tele y el pie de la cama.</span>
+      </div>
+      <div class="tip-item">
+        <span class="tip-icon">🧻</span>
+        <span>Límpalo con <strong>servitoallas</strong> — están en el refrigerador.</span>
+      </div>
+      <div class="highlight-amber highlight" style="margin-top:4px; margin-bottom:12px">
+        Comúnmente hace pipí en la madrugada y antes de las 9am. Si lo acompañas al arenero, suele entrar solito.
+      </div>
+      <div class="tip-item">
+        <span class="tip-icon">🔍</span>
+        <span><strong>Si no lo encuentras:</strong> revisa debajo del sofá (su favorito), debajo de la cama, o en el pasillo junto a los garrafones.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chiqui -->
+  <div class="cat-card">
+    <div class="cat-header" onclick="toggleCat('chiqui')">
+      <div>
+        <div class="cat-name">🐱 Chiqui</div>
+        <div class="cat-gender">La niña</div>
+      </div>
+      <div class="cat-chevron" id="chevron-chiqui">▼</div>
+    </div>
+    <div class="cat-body" id="cat-chiqui">
+      <div class="tip-item">
+        <span class="tip-icon">🚪</span>
+        <span><strong>La puerta del arenero:</strong> rasca muy fuerte y a veces la tira. Si está caída, solo ponla de vuelta.</span>
+      </div>
+      <div class="tip-item">
+        <span class="tip-icon">🤢</span>
+        <span>A veces vomita pelito, pero casi siempre lo hace en el baño — sin problema.</span>
+      </div>
+      <div class="tip-item">
+        <span class="tip-icon">🔍</span>
+        <span><strong>Si no la encuentras:</strong> revisa el espacio de la cocina junto a los garrafones, sus transportadoras, el escritorio, la silla del escritorio, o entre las cobijas del sofá y la cama.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jolie -->
+  <div class="cat-card">
+    <div class="cat-header" onclick="toggleCat('jolie')">
+      <div>
+        <div class="cat-name">🐱 Jolie</div>
+        <div class="cat-gender">La niña</div>
+      </div>
+      <div class="cat-chevron" id="chevron-jolie">▼</div>
+    </div>
+    <div class="cat-body" id="cat-jolie">
+      <div class="tip-item">
+        <span class="tip-icon">🤢</span>
+        <span>A veces vomita pelito, pero casi siempre lo hace en el baño — sin problema.</span>
+      </div>
+      <div class="tip-item">
+        <span class="tip-icon">🔍</span>
+        <span><strong>Si no la encuentras:</strong> revisa debajo de las cobijas de la cama — ese es su escondite favorito.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RUTINA -->
+<div id="rutina" class="section">
+  <div class="week-table">
+    <div class="week-row">
+      <div class="week-day">Lun</div>
+      <div class="week-content">
+        <div class="week-task"><span>✅</span><span>Julio dejó todo listo antes de salir</span></div>
+      </div>
+    </div>
+    <div class="week-row">
+      <div class="week-day highlight-day">Mar</div>
+      <div class="week-content">
+        <div class="week-task"><span>🪣</span><span>Limpiar los 2 areneros (4–5pm)</span></div>
+        <div class="week-task"><span>🍽️</span><span>Croquetas antes de dormir</span></div>
+      </div>
+    </div>
+    <div class="week-row">
+      <div class="week-day highlight-day">Mié</div>
+      <div class="week-content">
+        <div class="week-task"><span>🪣</span><span>Limpiar los 2 areneros (4–5pm)</span></div>
+        <div class="week-task"><span>💧</span><span>Revisar y llenar las 2 fuentes de agua</span></div>
+        <div class="week-task"><span>🍽️</span><span>Croquetas antes de dormir</span></div>
+      </div>
+    </div>
+    <div class="week-row">
+      <div class="week-day highlight-day">Jue</div>
+      <div class="week-content">
+        <div class="week-task"><span>🪣</span><span>Limpiar los 2 areneros (4–5pm)</span></div>
+        <div class="week-task"><span>🍽️</span><span>Croquetas antes de dormir</span></div>
+      </div>
+    </div>
+    <div class="week-row">
+      <div class="week-day">Vie–Dom</div>
+      <div class="week-content">
+        <div class="week-task"><span>🏠</span><span>Julio regresa — ya no es necesario que vengas, ¡gracias!</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Al llegar (4–5pm)</div>
+    <div class="card-title">Abre todas las cortinas</div>
+    <div class="card-body">Las puedes cerrar tú misma si te quedas, o dejarlas abiertas si solo vienes de paso.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Al salir — siempre revisar</div>
+    <div class="card-title">🔒 Checklist de salida</div>
+    <div class="card-body" style="margin-top:8px">
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <div style="display:flex; gap:8px; font-size:14px">✅ Puerta de la azotehuela cerrada</div>
+        <div style="display:flex; gap:8px; font-size:14px">✅ Puerta de la bodega cerrada</div>
+        <div style="display:flex; gap:8px; font-size:14px">✅ Entradas principales cerradas con llave</div>
+        <div style="display:flex; gap:8px; font-size:14px">✅ Luces: <strong>"Alexa, focos"</strong> + <strong>"Alexa, prende comedor"</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CASA (ALEXA) -->
+<div id="casa" class="section">
+  <div class="highlight-red highlight" style="margin-bottom:12px; border-radius:8px">
+    ⚠️ <strong>No uses los interruptores físicos.</strong> Solo resetean los focos inteligentes. Usa siempre Alexa para las luces.
+  </div>
+
+  <div class="card-label" style="margin-bottom:8px">Comandos de luz</div>
+  <div class="alexa-grid">
+    <div class="alexa-cmd">
+      <div class="cmd">"Luz"</div>
+      <div class="desc">Todas las luces al 50%</div>
+    </div>
+    <div class="alexa-cmd">
+      <div class="cmd">"Luz total"</div>
+      <div class="desc">Todas las luces al 100%</div>
+    </div>
+    <div class="alexa-cmd">
+      <div class="cmd">"Prende la cocina"</div>
+      <div class="desc">Solo los focos de la cocina</div>
+    </div>
+    <div class="alexa-cmd">
+      <div class="cmd">"Luz normal"</div>
+      <div class="desc">Focos focalizados en el depa</div>
+    </div>
+    <div class="alexa-cmd">
+      <div class="cmd">"Focos"</div>
+      <div class="desc">Luces para antes de dormir</div>
+    </div>
+    <div class="alexa-cmd">
+      <div class="cmd">"Duerme"</div>
+      <div class="desc">Apaga todo para dormir</div>
+    </div>
+  </div>
+
+  <div class="card-label" style="margin: 16px 0 8px">Fuentes de agua</div>
+  <div class="alexa-grid">
+    <div class="alexa-cmd">
+      <div class="cmd">"Apaga acuario"</div>
+      <div class="desc">Apaga las 2 fuentes</div>
+    </div>
+    <div class="alexa-cmd">
+      <div class="cmd">"Prende acuario"</div>
+      <div class="desc">Prende las 2 fuentes</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <div class="card-label">Si te quedas a dormir</div>
+    <div class="card-title">Usa los comandos libremente</div>
+    <div class="card-body">Puedes interactuar con la casa sin problema.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Si solo vienes de paso</div>
+    <div class="card-title">Antes de salir — luces para los gatitos</div>
+    <div class="card-body">
+      1. <strong>"Alexa, focos"</strong><br>
+      2. <strong>"Alexa, prende comedor"</strong>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggleCat(name) {
+    const body = document.getElementById('cat-' + name);
+    const chevron = document.getElementById('chevron-' + name);
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    chevron.classList.toggle('open', !isOpen);
+    chevron.textContent = isOpen ? '▼' : '▲';
+  }
+</script>
+</body>
+</html>
